@@ -1,0 +1,19 @@
+{
+  "_comment": "FDE hook configuration. Merge the 'hooks' block into your project's .claude/settings.local.json.",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "fde-extract",
+        "hooks": [{ "type": "command", "command": "python3 .claude/hooks/stop-extract.py" }]
+      },
+      {
+        "matcher": "fde-build",
+        "hooks": [{ "type": "command", "command": "python3 .claude/hooks/stop-build.py" }]
+      },
+      {
+        "matcher": "fde-assemble",
+        "hooks": [{ "type": "command", "command": "python3 .claude/hooks/stop-assemble.py" }]
+      }
+    ]
+  }
+}

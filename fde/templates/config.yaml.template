@@ -1,0 +1,29 @@
+# FDE config — fill in for your project
+# Paths are relative to project root.
+
+primary_design_file: design/wireframes.html
+context_docs:
+  - docs/handoff.md
+
+# Target stack — used in prompts to constrain output
+target_stack: Next.js 14 + Tailwind + shadcn/ui
+
+# Where the FDE produces artifacts
+component_lib_path: src/components
+tokens_path: src/styles/tokens.ts
+icons_path: src/icons
+copy_path: src/strings.ts
+
+# Where dev gallery routes live
+dev_gallery_route: /dev/components/
+app_routes_path: src/app/
+
+# Framework primitives — what Claude is allowed to use
+runtime_primitives: div, span, button, input
+
+# Theme mode — single | light+dark | multi-theme
+theme_mode: single
+
+# Git config
+git_commit_on_approve: true
+git_branch_per_phase: false  # if true, each phase runs on its own branch
