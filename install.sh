@@ -135,7 +135,7 @@ else
   echo "  wrote: .gitignore"
 fi
 
-# 6. python deps check
+# 6. python deps
 echo
 echo "Checking Python dependencies..."
 MISSING=""
@@ -146,8 +146,9 @@ for mod in yaml bs4 cssutils; do
 done
 
 if [ -n "$MISSING" ]; then
-  echo "  MISSING:$MISSING"
-  echo "  install with: pip install pyyaml beautifulsoup4 cssutils markdown-it-py"
+  echo "  Installing: pyyaml beautifulsoup4 cssutils markdown-it-py"
+  python3 -m pip install --quiet pyyaml beautifulsoup4 cssutils markdown-it-py
+  echo "  done"
 else
   echo "  all present"
 fi
