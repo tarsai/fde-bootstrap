@@ -5,8 +5,14 @@ primary_design_file: design/wireframes.html
 context_docs:
   - docs/handoff.md
 
-# Target stack — used in prompts to constrain output
-target_stack: Next.js 14 + Tailwind + shadcn/ui
+# target_stack: describe your project's actual stack (e.g. "Expo Router + NativeWind", "Next.js 14 + Tailwind + shadcn/ui")
+# This is descriptive — FDE reads it to produce correct import paths and primitives.
+# Run `fde-status` after filling this in to validate it matches your package.json.
+# Leave blank or omit to get an error at Phase 1 start — do not copy the example above.
+
+# Font loading — path to the file that contains your Google Fonts @import or <link>
+# Required for font-completeness validation (axes, weights, display=swap).
+# font_css_path: apps/web/global.css
 
 # Where the FDE produces artifacts
 component_lib_path: src/components

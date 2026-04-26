@@ -6,6 +6,12 @@ Run `touch .fde/active` to activate FDE stop hooks for this session.
 
 Read `.fde/config.yaml` in full. Every path below refers to keys in that file. Never invent paths.
 
+**Validate config before proceeding** — run this and stop if it exits non-zero:
+```
+python3 fde/validators/validate_config.py
+```
+If it fails, show the output and tell the user to fix `target_stack` in `.fde/config.yaml` before continuing.
+
 If `.fde/state.json` exists and shows `extract.approved_at` is already set, tell the user and ask whether to re-run before proceeding.
 
 ## Anti-pattern blocklist — any violation blocks phase approval
@@ -35,7 +41,7 @@ Wrap output behind a `useTheme()` hook or equivalent token-resolver pattern appr
 1. `colors` — every named color including alpha variants. Preserve exact rgba/hsla. camelCase keys.
 2. `semanticColors` — color aliases tied to roles (content-type indicators, status, brand, surface levels). Identify by repeated use tied to meaning.
 3. `a11yTokens` — accessibility tokens: focus-ring color, focus-ring width/offset, minimum tap-target size, contrast-pair flags. If not explicit in source, derive from existing tokens and flag as `⚠️ derived` in tokens.diff.md.
-4. `fonts` — every font family stack. Mark annotation/handwriting fonts as `// dev-only`.
+4. `fonts` — every font family stack. Mark annotation/handwriting fonts as `// dev-only`. If `font_css_path` is set in config, copy the **exact** Google Fonts `<link>` or `@import` URL from the design source into that file — do not alter it (preserves all axes and weights for validator comparison).
 5. `typography` — every distinct combination of font-size + line-height + letter-spacing + font-weight + font-family. Named entry per combination. Do not collapse near-duplicates.
 6. `spacing` — every padding/gap/margin value.
 7. `radii` — every border-radius.

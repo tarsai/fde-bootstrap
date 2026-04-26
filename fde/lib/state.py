@@ -21,6 +21,7 @@ class PhaseRecord:
     approved_at: str | None = None
     commit_sha: str | None = None
     report_path: str | None = None
+    last_artifact_mtime: float | None = None
 
 
 @dataclass
@@ -102,3 +103,36 @@ def current_unapproved_phase() -> Phase | None:
         if rec.validators_passed_at and not rec.approved_at:
             return p
     return None
+
+
+def max_mtime(paths: list[Path]) -> float | None:
+    """Return the maximum mtime across a list of files/directories. None if nothing exists."""
+    mtimes: list[float] = []
+    for p in paths:
+        if p.is_dir():
+            for f in p.rglob("*"):
+                if f.is_file():
+                    mtimes.append(f.stat().st_mtime)
+        elif p.is_file():
+            mtimes.append(p.stat().st_mtime)
+    return max(mtimes) if mtimes else None
+
+
+def should_skip_validators(phase: Phase, watched_paths: list[Path]) -> bool:
+    """Return True if artifact mtimes haven't changed since last validator run."""
+    current = max_mtime(watched_paths)
+    if current is None:
+        return False  # no artifacts yet — run so validators can report them missing
+    rec: PhaseRecord = getattr(load_state(), phase)
+    return rec.last_artifact_mtime is not None and current <= rec.last_artifact_mtime
+
+
+def record_validator_run(phase: Phase, watched_paths: list[Path]) -> None:
+    """Snapshot current artifact mtime so the next stop-hook turn can skip if nothing changed."""
+    current = max_mtime(watched_paths)
+    if current is None:
+        return
+    s = load_state()
+    rec: PhaseRecord = getattr(s, phase)
+    rec.last_artifact_mtime = current
+    save_state(s)

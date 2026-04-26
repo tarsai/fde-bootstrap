@@ -20,11 +20,28 @@ VALIDATORS = [
 ]
 
 
+def _watched_paths() -> list[Path]:
+    try:
+        sys.path.insert(0, str(ROOT))
+        from fde.lib.config import load_config
+        cfg = load_config()
+        return [cfg.component_lib_path]
+    except SystemExit:
+        return []
+
+
 def main() -> int:
     if not (ROOT / ".fde/active").exists():
         return 0
 
     if not (ROOT / ".fde/config.yaml").exists():
+        return 0
+
+    sys.path.insert(0, str(ROOT))
+    from fde.lib.state import should_skip_validators, record_validator_run
+
+    watched = _watched_paths()
+    if should_skip_validators("build", watched):
         return 0
 
     failures: list[tuple[str, str]] = []
@@ -54,6 +71,8 @@ def main() -> int:
                 formatted = output
             failures.append((name, formatted))
 
+    record_validator_run("build", watched)
+
     if failures:
         print("─── Phase 2 stop hook: VALIDATORS FAILED ───\n")
         for name, msg in failures:
@@ -62,12 +81,12 @@ def main() -> int:
         return 1
 
     try:
-        sys.path.insert(0, str(ROOT))
         from fde.lib.state import mark_validators_passed
         mark_validators_passed("build")
     except Exception as e:
         print(f"STOP HOOK WARNING: validators passed but could not update state: {e}", file=sys.stderr)
 
+    (ROOT / ".fde/active").unlink(missing_ok=True)
     print("✓ Phase 2 validators passed. Run /fde-approve to record human approval after reviewing gallery routes.")
     return 0
 
